@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:to_do/Screens/AuthenticationScreens/CreateAccount.dart';
+import 'package:to_do/Screens/AuthenticationScreens/LoginYourAccount.dart';
+import 'package:to_do/Screens/AuthenticationScreens/forgeting_pass.dart';
 import 'package:to_do/Screens/IntroScreens/introscreenbetwen.dart';
 import 'package:to_do/Screens/IntroScreens/introscreenfirst.dart';
 import 'package:to_do/Screens/IntroScreens/introscreenlast.dart';
@@ -35,6 +38,9 @@ class MyApp extends StatelessWidget {
           desc:
           "Make every event memorable by sharing the experience with others. Our platform lets you invite friends, keep everyone in the loop, and celebrate moments together. Capture and share the excitement with your network, so you can relive the highlights and cherish the memories.",
         ),
+        create.routeName : (context) =>Createaccount(),
+        Login.ruoteName : (context) => Loginyouraccount(),
+        ForgetPass.routeName : (context) =>ForgetingPass(),
       },
       debugShowCheckedModeBanner: false,
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:to_do/Screens/AuthenticationScreens/CreateAccount.dart';
 import 'package:to_do/Screens/IntroScreens/introscreenbetwen.dart';
 import 'package:to_do/core/Colors.dart';
 
@@ -75,7 +76,11 @@ class Introscreenlast extends StatelessWidget {
               child: Center(
                 child: MaterialButton(
                   onPressed: () {
-                    Navigator.pushNamed(context,Introscreenbetwen.routeName);
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      create.routeName,
+                          (route) => false,
+                    );
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16)
