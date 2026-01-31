@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:to_do/Screens/AuthenticationScreens/LoginYourAccount.dart';
 import 'package:to_do/Screens/IntroScreens/introscreenlast.dart';
-import 'package:to_do/core/Colors.dart';
+import 'package:to_do/core/cash_helper.dart';
 
 class Introscreenbetwen extends StatelessWidget {
   static String routeName = "Introscreenbetwen";
@@ -14,11 +16,15 @@ class Introscreenbetwen extends StatelessWidget {
     required this.titele,
     required this.desc,
   });
+
   @override
   Widget build(BuildContext context) {
+    final dividerColor = Theme.of(context).dividerColor;
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    final iconColor = Theme.of(context).iconTheme.color;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.background,
         title: Image.asset(
           "assets/images/Evently.png",
           height: 300,
@@ -26,36 +32,55 @@ class Introscreenbetwen extends StatelessWidget {
         ),
         centerTitle: true,
         leading: Padding(
-          padding: EdgeInsets.symmetric(vertical: 16 , horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           child: InkWell(
-            onTap: (){
+            onTap: () {
               Navigator.pop(context);
             },
             child: Container(
               height: 32,
               width: 32,
-              color: AppColors.inputs,
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: dividerColor),
+              ),
               child: Align(
                 alignment: Alignment.center,
-                child: Icon(Icons.arrow_back_ios_new , color: AppColors.maincolor, size: 24,)
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: iconColor,
+                  size: 18,
+                ),
               ),
             ),
           ),
         ),
         actions: [
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 16 , horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             child: InkWell(
-              onTap: (){},
+              onTap: () {
+                CashHelper.Savebool1(true);
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  Login.ruoteName,
+                      (route) => false,
+                );
+              },
               child: Container(
                 height: 32,
                 width: 63,
-                color: AppColors.inputs,
+                decoration: BoxDecoration(
+                  color: surfaceColor,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: dividerColor),
+                ),
                 child: Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "Skip",
-                    style: TextStyle(color: AppColors.maincolor , fontSize: 14 , fontWeight: FontWeight.bold),
+                    "skip".tr(),
+                    style: Theme.of(context).textTheme.displaySmall,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -64,52 +89,38 @@ class Introscreenbetwen extends StatelessWidget {
           ),
         ],
       ),
-      backgroundColor: AppColors.background,
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Image.asset(image, height: 390, width: 390)),
-            SizedBox(height: 30),
-            Text(
-              titele,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF1C1C1C),
-              ),
-            ),
-            SizedBox(height: 15),
-            Text(
-              desc
-              ,style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF686868),
-            ),
-            ),
-            SizedBox(height: 30),
+            Center(child: Image.asset(image, height: 343, width: 343)),
+            const SizedBox(height: 15),
+            Text(titele, style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 15),
+            Text(desc, style: Theme.of(context).textTheme.bodyMedium),
+            const SizedBox(height: 20),
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Center(
                 child: MaterialButton(
                   onPressed: () {
-                    Navigator.pushNamed(context,Introscreenlast.routeName);
+                    Navigator.pushNamed(context, Introscreenlast.routeName);
                   },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   height: 50,
                   minWidth: double.infinity,
-                  color: AppColors.maincolor,
+                  color: Theme.of(context).colorScheme.primary,
                   child: Text(
-                    "Next",
-                    style: TextStyle(fontSize: 24, color: AppColors.inputs),
+                    "next".tr(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayLarge
+                        ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
