@@ -1,7 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:to_do/Screens/AuthenticationScreens/CreateAccount.dart';
 import 'package:to_do/Screens/AuthenticationScreens/forgeting_pass.dart';
-import 'package:to_do/core/Colors.dart';
+import 'package:to_do/Screens/HomeScreen/home_screen.dart';
+import 'package:to_do/core/cash_helper.dart';
+import 'package:to_do/core/firebaseFunctions.dart';
 
 class Loginyouraccount extends StatefulWidget {
   @override
@@ -10,12 +13,22 @@ class Loginyouraccount extends StatefulWidget {
 
 class Login extends State<Loginyouraccount> {
   static String ruoteName = "Loginyouraccount";
+  final LoginKey = GlobalKey<FormState>();
+  final emailController = TextEditingController();
+  final passController = TextEditingController();
+  bool isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final iconColor = Theme.of(context).iconTheme.color;
+    final textBodySmall = Theme.of(context).textTheme.bodySmall;
+    final textDisplayLarge = Theme.of(context).textTheme.displayLarge;
+
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: Image.asset(
           "assets/images/Evently.png",
           height: 300,
@@ -23,31 +36,41 @@ class Login extends State<Loginyouraccount> {
         ),
         centerTitle: true,
       ),
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Login to your account",
-              style: TextStyle(
-                color: AppColors.maincolor,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        child: Form(
+          key: LoginKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "login_to_account".tr(),
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
-            ),
-            SizedBox(height: 24),
-            Form(
-              child: TextFormField(
+              const SizedBox(height: 24),
+              TextFormField(
+                controller: emailController,
+                validator: (val) {
+                  final bool emailValid = RegExp(
+                    r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+                  ).hasMatch(val!);
+                  if (val == null || val.isEmpty) {
+                    return "email_required".tr();
+                  }
+                  if (!emailValid) {
+                    return "email_invalid".tr();
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
                   label: Text(
-                    "Enter your email",
-                    style: TextStyle(color: AppColors.SecText),
+                    "enter_email".tr(),
+                    style: textBodySmall,
                   ),
                   prefixIcon: Icon(
                     Icons.mail,
-                    color: AppColors.Disable,
+                    color: iconColor,
                     size: 24,
                   ),
                   border: OutlineInputBorder(
@@ -55,32 +78,35 @@ class Login extends State<Loginyouraccount> {
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 16),
-            Form(
-              child: TextFormField(
+              const SizedBox(height: 16),
+              TextFormField(
+                validator: (val) {
+                  if (val == null || val.isEmpty) {
+                    return "enter_password".tr();
+                  }
+                  return null;
+                },
+                controller: passController,
+                obscureText: !isPasswordVisible,
                 decoration: InputDecoration(
                   label: Text(
-                    "Enter your password",
-                    style: TextStyle(color: AppColors.SecText),
+                    "enter_password".tr(),
+                    style: textBodySmall,
                   ),
                   prefixIcon: Icon(
                     Icons.lock,
-                    color: AppColors.Disable,
+                    color: iconColor,
                     size: 24,
                   ),
                   suffixIcon: InkWell(
                     onTap: () {
-                      Icon(
-                        Icons.visibility_off,
-                        color: AppColors.Disable,
-                        size: 24,
-                      );
-                      setState(() {});
+                      setState(() {
+                        isPasswordVisible = !isPasswordVisible;
+                      });
                     },
                     child: Icon(
-                      Icons.remove_red_eye_sharp,
-                      color: AppColors.Disable,
+                      isPasswordVisible ? Icons.remove_red_eye_sharp : Icons.visibility_off,
+                      color: iconColor,
                       size: 24,
                     ),
                   ),
@@ -89,109 +115,144 @@ class Login extends State<Loginyouraccount> {
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                Spacer(),
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, ForgetPass.routeName);
-                  },
-                  child: Text(
-                    "Forget Password? ",
-                    style: TextStyle(
-                      color: AppColors.maincolor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Spacer(),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, ForgetPass.routeName);
+                    },
+                    child: Text(
+                      "forget_password".tr(),
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Center(
+                  child: MaterialButton(
+                    onPressed: () {
+                      if (LoginKey.currentState!.validate()) {
+                        Firebasefunctions.signIn(
+                          emailController.text,
+                          passController.text,
+                          onError: (massage) {
+                            return ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: colorScheme.surface,
+                                content: Text(
+                                  massage,
+                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          onSuccess: () {
+                            CashHelper.Savebool2(true);
+                            Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              HomeScreen.routeName,
+                                  (route) => false,
+                            );
+                          },
+                        );
+                      }
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    height: 50,
+                    minWidth: double.infinity,
+                    color: colorScheme.primary,
+                    child: Text(
+                      "login".tr(),
+                      style: textDisplayLarge?.copyWith(color: colorScheme.onPrimary),
                     ),
                   ),
                 ),
-              ],
-            ),
-            SizedBox(height: 40),
-            Padding(
-              padding: EdgeInsets.all(16),
-              child: Center(
+              ),
+              const SizedBox(height: 48),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "no_account".tr(),
+                    style: textBodySmall,
+                  ),
+                  const SizedBox(width: 1),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        create.routeName,
+                            (route) => false,
+                      );
+                    },
+                    child: Text(
+                      "sign_up".tr(),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 32),
+              Center(
+                child: Text(
+                  "or".tr(),
+                  style: Theme.of(context).textTheme.labelSmall,
+                ),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.all(14),
                 child: MaterialButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    CashHelper.Savebool3(true);
+                    var user = await Firebasefunctions.signInWithGoogle();
+                    if (user != null) {
+                      Navigator.pushNamedAndRemoveUntil(
+                        context,
+                        HomeScreen.routeName,
+                            (route) => false,
+                      );
+                    }
+                  },
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                   height: 50,
                   minWidth: double.infinity,
-                  color: AppColors.maincolor,
-                  child: Text(
-                    "Login",
-                    style: TextStyle(fontSize: 24, color: AppColors.inputs),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(height: 48),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "Don’t have an account ? ",
-                  style: TextStyle(color: AppColors.SecText, fontSize: 14),
-                ),
-                SizedBox(width: 1),
-                InkWell(
-                  onTap: () {
-                    Navigator.pushNamedAndRemoveUntil(
-                      context,
-                      create.routeName,
-                      (route) => false,
-                    );
-                  },
-                  child: Text(
-                    "Signup",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.maincolor,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 32),
-            Center(
-              child: Text(
-                "Or",
-                style: TextStyle(color: AppColors.maincolor, fontSize: 16),
-              ),
-            ),
-            SizedBox(height: 24),
-            Padding(
-              padding: EdgeInsets.all(14),
-              child: MaterialButton(
-                onPressed: () {},
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                height: 50,
-                minWidth: double.infinity,
-                color: AppColors.inputs,
-                child: Row(
-                  children: [
-                    Spacer(),
-                    Image.asset("assets/images/google.png" , height: 24,width: 24,),
-                    SizedBox(width: 10),
-                    Text(
-                      "Sign up with Google",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: AppColors.maincolor,
+                  color: colorScheme.surface,
+                  child: Row(
+                    children: [
+                      const Spacer(),
+                      Image.asset(
+                        "assets/images/google.png",
+                        height: 24,
+                        width: 24,
                       ),
-                    ),
-                    Spacer(),
-                  ],
+                      const SizedBox(width: 10),
+                      Text(
+                        "sign_up_google".tr(),
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

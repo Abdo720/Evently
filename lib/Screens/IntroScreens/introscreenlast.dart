@@ -1,7 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:to_do/Screens/AuthenticationScreens/CreateAccount.dart';
-import 'package:to_do/Screens/IntroScreens/introscreenbetwen.dart';
-import 'package:to_do/core/Colors.dart';
+import 'package:to_do/Screens/AuthenticationScreens/LoginYourAccount.dart';
+import 'package:to_do/core/cash_helper.dart';
 
 class Introscreenlast extends StatelessWidget {
   static String routeName = "Introscreenlast";
@@ -18,9 +18,12 @@ class Introscreenlast extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dividerColor = Theme.of(context).dividerColor;
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+    final iconColor = Theme.of(context).iconTheme.color;
+
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.background,
         title: Image.asset(
           "assets/images/Evently.png",
           height: 300,
@@ -28,69 +31,70 @@ class Introscreenlast extends StatelessWidget {
         ),
         centerTitle: true,
         leading: Padding(
-          padding: EdgeInsets.symmetric(vertical: 16 , horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
           child: InkWell(
-            onTap: (){
+            onTap: () {
               Navigator.pop(context);
             },
             child: Container(
               height: 32,
               width: 32,
-              color: AppColors.inputs,
+              decoration: BoxDecoration(
+                color: surfaceColor,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: dividerColor),
+              ),
               child: Align(
-                  alignment: Alignment.center,
-                  child: Icon(Icons.arrow_back_ios_new , color: AppColors.maincolor, size: 24,)
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  color: iconColor,
+                  size: 18,
+                ),
               ),
             ),
           ),
         ),
       ),
-      backgroundColor: AppColors.background,
       body: Padding(
-        padding: EdgeInsets.symmetric(vertical: 16 , horizontal: 16),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Image.asset(image, height: 390, width: 390)),
-            SizedBox(height: 30),
+            Center(child: Image.asset(image, height: 343, width: 343)),
+            const SizedBox(height: 15),
             Text(
               titele,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF1C1C1C),
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 8),
             Text(
-              desc
-              ,style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w400,
-              color: Color(0xFF686868),
+              desc,
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
-            ),
-            SizedBox(height: 30),
+            const Spacer(),
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Center(
                 child: MaterialButton(
                   onPressed: () {
+                    CashHelper.Savebool1(true);
                     Navigator.pushNamedAndRemoveUntil(
                       context,
-                      create.routeName,
+                      Login.ruoteName,
                           (route) => false,
                     );
                   },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)
-                  ),
-                  height: 50,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  height: 49,
                   minWidth: double.infinity,
-                  color: AppColors.maincolor,
+                  color: Theme.of(context).colorScheme.primary,
                   child: Text(
-                    "Get Started",
-                    style: TextStyle(fontSize: 24, color: AppColors.inputs),
+                    "get_started".tr(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayLarge
+                        ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ),

@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:to_do/Screens/AuthenticationScreens/LoginYourAccount.dart';
 import 'package:to_do/Screens/IntroScreens/introscreenbetwen.dart';
-import 'package:to_do/core/Colors.dart';
+import 'package:to_do/core/cash_helper.dart';
 
 class IntroscreenFirst extends StatelessWidget {
   static String routeName = "IntroscreenFirst";
@@ -19,7 +21,6 @@ class IntroscreenFirst extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.background,
         title: Image.asset(
           "assets/images/Evently.png",
           height: 300,
@@ -28,18 +29,25 @@ class IntroscreenFirst extends StatelessWidget {
         centerTitle: true,
         actions: [
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 16 , horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
             child: InkWell(
-              onTap: (){},
+              onTap: () {
+                CashHelper.Savebool1(true);
+                Navigator.pushNamedAndRemoveUntil(context, Login.ruoteName, (route) => false);
+              },
               child: Container(
                 height: 32,
                 width: 63,
-                color: AppColors.inputs,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Theme.of(context).dividerColor),
+                ),
                 child: Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "Skip",
-                    style: TextStyle(color: AppColors.maincolor , fontSize: 14 , fontWeight: FontWeight.bold),
+                    "skip".tr(),
+                    style: Theme.of(context).textTheme.displaySmall,
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -48,48 +56,40 @@ class IntroscreenFirst extends StatelessWidget {
           ),
         ],
       ),
-      backgroundColor: AppColors.background,
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Center(child: Image.asset(image, height: 390, width: 390)),
-            SizedBox(height: 30),
+            Center(child: Image.asset(image, height: 343, width: 343)),
+            const SizedBox(height: 15),
             Text(
               titele,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF1C1C1C),
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 8),
             Text(
               desc,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF686868),
-              ),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 16),
             Padding(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Center(
                 child: MaterialButton(
                   onPressed: () {
-                    Navigator.pushNamed(context,Introscreenbetwen.routeName);
+                    Navigator.pushNamed(context, Introscreenbetwen.routeName);
                   },
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   height: 50,
                   minWidth: double.infinity,
-                  color: AppColors.maincolor,
+                  color: Theme.of(context).colorScheme.primary,
                   child: Text(
-                    "Next",
-                    style: TextStyle(fontSize: 24, color: AppColors.inputs),
+                    "next".tr(),
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayLarge
+                        ?.copyWith(color: Theme.of(context).colorScheme.onPrimary),
                   ),
                 ),
               ),
